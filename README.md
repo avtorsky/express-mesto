@@ -1,14 +1,29 @@
-# Проект Mesto фронтенд + бэкенд
+# Mesto (Node.js / MongoDB) 
 
-## Директории
+[About](#about) /
+[Changelog](#changelog) /
+[Environment](#environment) /
+[Deploy](#deploy) /
+[Contact](#contact)
 
-`/routes` — папка с файлами роутера  
-`/controllers` — папка с файлами контроллеров пользователя и карточки   
-`/models` — папка с файлами описания схем пользователя и карточки  
-  
-Остальные директории вспомогательные, создаются при необходимости разработчиком
+## About
+Backend for original <a href="https://github.com/avtorsky/react-mesto-auth" target="_blank">/react-mesto-auth</a> single page demo
 
-## Запуск проекта
+Developed under the [Practicum](https://practicum.yandex.com/web/) online bootcamp with the following stack implementation:
+* Node.js, Express, MongoDB, Mongoose
 
-`npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
+## Changelog
+Release 20210729:
+* ci(package.json): scripts config, <a href="https://github.com/avtorsky/express-mesto" target="_blank">/express-mesto</a> repository setup && HTTP server init
+
+## Environment
+`/routes` routing config
+`/controllers` controllers config for /users && /cards
+`/models` API scheme config for /user && /card models
+
+## Deploy
+`npm run start` initiates an HTTP server
+`npm run dev` initiates an HTTP server with hot-reload
+
+## Contact
+__GitHub:__ <a href="https://github.com/avtorsky" target="_blank">https://github.com/avtorsky</a>
