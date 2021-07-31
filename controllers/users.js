@@ -10,18 +10,23 @@ const {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send(users))
+    .then((users) => res.send({ users }))
     .catch(() => {
       res.status(codeServerError).send({ message: defaultError });
     });
 };
 
 const getUser = (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => res.send(user))
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(codeNotFound).send({ message: userCastError });
+      }
+      return res.send(user);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(codeNotFound).send({ message: userCastError });
+        return res.status(codeBadRequest).send({ message: userCastError });
       }
       return res.status(codeServerError).send({ message: defaultError });
     });
@@ -48,12 +53,17 @@ const updateUser = (req, res) => {
     { name, about },
     { new: true, upsert: true, runValidators: true },
   )
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        return res.status(codeNotFound).send({ message: userCastError });
+      }
+      return res.send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(codeBadRequest).send({ message: userValidationError });
       } if (err.name === 'CastError') {
-        return res.status(codeNotFound).send({ message: userCastError });
+        return res.status(codeBadRequest).send({ message: userCastError });
       }
       return res.status(codeServerError).send({ message: defaultError });
     });
@@ -67,12 +77,17 @@ const updateAvatar = (req, res) => {
     { avatar },
     { new: true, upsert: true, runValidators: true },
   )
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        return res.status(codeNotFound).send({ message: userCastError });
+      }
+      return res.send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(codeBadRequest).send({ message: userValidationError });
       } if (err.name === 'CastError') {
-        return res.status(codeNotFound).send({ message: userCastError });
+        return res.status(codeBadRequest).send({ message: userCastError });
       }
       return res.status(codeServerError).send({ message: defaultError });
     });
