@@ -11,7 +11,7 @@ const {
 const getCards = (req, res) => {
   Card.find({})
     .populate(['owner', 'likes'])
-    .then((cards) => res.send(cards))
+    .then((cards) => res.send({ cards }))
     .catch(() => {
       res.status(codeServerError).send({ message: defaultError });
     });
@@ -32,10 +32,15 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(codeNotFound).send({ message: cardCastError });
+      }
+      return res.send(card);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(codeNotFound).send({ message: cardCastError });
+        return res.status(codeBadRequest).send({ message: cardCastError });
       }
       return res.status(codeServerError).send({ message: defaultError });
     });
@@ -48,7 +53,12 @@ const likeCard = (req, res) => {
     { new: true },
   )
     .populate('likes')
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(codeNotFound).send({ message: cardCastError });
+      }
+      return res.send(card);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(codeBadRequest).send({ message: cardValidationError });
@@ -64,7 +74,12 @@ const dislikeCard = (req, res) => {
     { new: true },
   )
     .populate('likes')
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(codeNotFound).send({ message: cardCastError });
+      }
+      return res.send(card);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(codeBadRequest).send({ message: cardValidationError });
