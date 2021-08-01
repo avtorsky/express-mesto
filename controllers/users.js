@@ -49,9 +49,9 @@ const updateUser = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
-    req.user._id,
+    req.user.userId,
     { name, about },
-    { new: true, upsert: true, runValidators: true },
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (!user) {
@@ -73,9 +73,9 @@ const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
-    req.user._id,
+    req.user.userId,
     { avatar },
-    { new: true, upsert: true, runValidators: true },
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (!user) {
