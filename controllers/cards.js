@@ -62,6 +62,8 @@ const likeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(codeBadRequest).send({ message: cardValidationError });
+      } if (err.name === 'CastError') {
+        return res.status(codeBadRequest).send({ message: cardCastError });
       }
       return res.status(codeServerError).send({ message: defaultError });
     });
@@ -83,6 +85,8 @@ const dislikeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(codeBadRequest).send({ message: cardValidationError });
+      } if (err.name === 'CastError') {
+        return res.status(codeBadRequest).send({ message: cardCastError });
       }
       return res.status(codeServerError).send({ message: defaultError });
     });
