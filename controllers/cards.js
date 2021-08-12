@@ -1,52 +1,50 @@
 const Card = require('../models/card');
-const {
-  defaultError,
-  cardValidationError,
-  cardCastError,
-  codeBadRequest,
-  codeNotFound,
-  codeServerError,
-} = require('../utils/errors');
+const { cardValidationError, cardAuthError, cardCastError } = require('../utils/errors');
+const { codeStatusOk, codeStatusCreated } = require('../utils/constants');
+const BadRequestError = require('../errors/bad-request');
+const ForbiddenError = require('../errors/forbidden');
+const NotFoundError = require('../errors/not-found');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .populate(['owner', 'likes'])
-    .then((cards) => res.send({ cards }))
-    .catch(() => {
-      res.status(codeServerError).send({ message: defaultError });
-    });
+    .then((cards) => res.status(codeStatusOk).send({ cards }))
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send(card))
+    .then((card) => res.status(codeStatusCreated).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(codeBadRequest).send({ message: cardValidationError });
+        throw new BadRequestError(cardValidationError);
       }
-      return res.status(codeServerError).send({ message: defaultError });
-    });
+    })
+    .catch(next);
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findByIdAndDelete(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(codeNotFound).send({ message: cardCastError });
+        throw new NotFoundError(cardCastError);
       }
-      return res.send(card);
+      if (JSON.stringify(card.owner) !== JSON.stringify(req.user._id)) {
+        throw new ForbiddenError(cardAuthError);
+      }
+      return res.status(codeStatusOk).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(codeBadRequest).send({ message: cardCastError });
+        throw new BadRequestError(cardCastError);
       }
-      return res.status(codeServerError).send({ message: defaultError });
-    });
+    })
+    .catch(next);
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -55,21 +53,21 @@ const likeCard = (req, res) => {
     .populate('likes')
     .then((card) => {
       if (!card) {
-        return res.status(codeNotFound).send({ message: cardCastError });
+        throw new NotFoundError(cardCastError);
       }
-      return res.send(card);
+      return res.status(codeStatusOk).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(codeBadRequest).send({ message: cardValidationError });
+        throw new BadRequestError(cardValidationError);
       } if (err.name === 'CastError') {
-        return res.status(codeBadRequest).send({ message: cardCastError });
+        throw new BadRequestError(cardCastError);
       }
-      return res.status(codeServerError).send({ message: defaultError });
-    });
+    })
+    .catch(next);
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -78,18 +76,18 @@ const dislikeCard = (req, res) => {
     .populate('likes')
     .then((card) => {
       if (!card) {
-        return res.status(codeNotFound).send({ message: cardCastError });
+        throw new NotFoundError(cardCastError);
       }
-      return res.send(card);
+      return res.status(codeStatusOk).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(codeBadRequest).send({ message: cardValidationError });
+        throw new BadRequestError(cardValidationError);
       } if (err.name === 'CastError') {
-        return res.status(codeBadRequest).send({ message: cardCastError });
+        throw new BadRequestError(cardCastError);
       }
-      return res.status(codeServerError).send({ message: defaultError });
-    });
+    })
+    .catch(next);
 };
 
 module.exports = {

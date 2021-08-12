@@ -10,9 +10,15 @@
 Backend for original <a href="https://github.com/avtorsky/react-mesto-auth" target="_blank">/react-mesto-auth</a> single page demo
 
 Developed under the [Practicum](https://practicum.yandex.com/web/) online bootcamp with the following stack implementation:
-* Node.js, Express, MongoDB, Mongoose
+* Node.js, Express, MongoDB, Mongoose, Joi
 
 ## Changelog
+Release 20210812:
+* feat(/controllers/users.js): /sign && /signup auth API endpoints release
+* feat(/middlewares/auth.js): auth middleware && protected routing connection
+* feat(/errors): centralized errors handling && controllers refactoring
+* refactor(app.js): protect requests with prevalidation via Joi package
+
 Release 20210730:
 * feat(app.js): MongoDB connection, major release of controllers && models schema for API endpoints
 
