@@ -1,3 +1,4 @@
+const serverThrottlingError = 'Превышен лимит запросов к HTTP-серверу, просьба повторить попытку позже.';
 const internalServerError = 'Ошибка обработки запроса на сервере.';
 const endpointCastError = 'Указанный URI ресурса не найден в базе.';
 const endpointAuthError = 'Недостаточно прав для доступа к указанному URI ресурса.';
@@ -17,6 +18,7 @@ const codeConflict = 409;
 const codeServerError = 500;
 
 module.exports = {
+  serverThrottlingError,
   internalServerError,
   endpointCastError,
   endpointAuthError,

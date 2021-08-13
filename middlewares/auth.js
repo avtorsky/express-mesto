@@ -5,6 +5,7 @@ const ForbiddenError = require('../errors/forbidden');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
+  const { JWT_SECRET } = process.env;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new UnauthorizedError(userAuthError);
@@ -14,7 +15,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'future-env-secret-key-here');
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     throw new ForbiddenError(endpointAuthError);
   }
