@@ -21,8 +21,8 @@ const createCard = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError(cardValidationError);
       }
-    })
-    .catch(next);
+      next();
+    });
 };
 
 const deleteCard = (req, res, next) => {
@@ -40,8 +40,8 @@ const deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError(cardCastError);
       }
-    })
-    .catch(next);
+      next();
+    });
 };
 
 const likeCard = (req, res, next) => {
@@ -63,8 +63,8 @@ const likeCard = (req, res, next) => {
       } if (err.name === 'CastError') {
         throw new BadRequestError(cardCastError);
       }
-    })
-    .catch(next);
+      next();
+    });
 };
 
 const dislikeCard = (req, res, next) => {
@@ -86,8 +86,8 @@ const dislikeCard = (req, res, next) => {
       } if (err.name === 'CastError') {
         throw new BadRequestError(cardCastError);
       }
-    })
-    .catch(next);
+      next();
+    });
 };
 
 module.exports = {

@@ -31,8 +31,8 @@ const getCurrentUser = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError(userCastError);
       }
-    })
-    .catch(next);
+      next();
+    });
 };
 
 const createUser = (req, res, next) => {
@@ -46,7 +46,7 @@ const createUser = (req, res, next) => {
   return User.findOne({ email })
     .then((user) => {
       if (user) {
-        throw new UnauthorizedError(userValidationError);
+        next(new ConflictError(userCredentialsError));
       } return bcrypt.hash(password, 10);
     })
     .then((hash) => User.create({
@@ -60,11 +60,8 @@ const createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError(userValidationError);
       }
-      if (err.name === 'MongoError' && err.code === 11000) {
-        throw new ConflictError(userCredentialsError);
-      }
-    })
-    .catch(next);
+      next();
+    });
 };
 
 const updateUser = (req, res, next) => {
@@ -87,8 +84,8 @@ const updateUser = (req, res, next) => {
       } if (err.name === 'CastError') {
         throw new BadRequestError(userCastError);
       }
-    })
-    .catch(next);
+      next();
+    });
 };
 
 const updateAvatar = (req, res, next) => {
@@ -111,28 +108,28 @@ const updateAvatar = (req, res, next) => {
       } if (err.name === 'CastError') {
         throw new BadRequestError(userCastError);
       }
-    })
-    .catch(next);
+      next();
+    });
 };
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
+  const { JWT_SECRET } = process.env;
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'future-env-secret-key-here', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res
         .status(codeStatusOk)
         .cookie('jwt', token, {
           httpOnly: true,
           maxAge: maxAgeValue,
         })
-        .send(token);
+        .send({ token });
     })
     .catch(() => {
-      throw new UnauthorizedError(userAuthError);
-    })
-    .catch(next);
+      next(new UnauthorizedError(userAuthError));
+    });
 };
 
 module.exports = {
