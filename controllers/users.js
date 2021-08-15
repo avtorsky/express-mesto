@@ -114,7 +114,7 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  const { JWT_SECRET } = process.env;
+  const { JWT_SECRET = 'dev-secret' } = process.env;
 
   User.findUserByCredentials(email, password)
     .then((user) => {
