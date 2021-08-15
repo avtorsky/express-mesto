@@ -5,7 +5,7 @@ const ForbiddenError = require('../errors/forbidden');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  const { JWT_SECRET } = process.env;
+  const { JWT_SECRET = 'dev-secret' } = process.env;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new UnauthorizedError(userAuthError);
